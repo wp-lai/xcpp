@@ -23,6 +23,7 @@ int main() {
     vector<int> vec;
     int element;
     while (ifs >> element) vec.push_back(element);
+    ifs.close();
 
     int n_comps = count_comps(vec);
     cout << "There are " << n_comps << " comparisons used by QuickSort" << endl;
