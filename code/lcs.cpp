@@ -1,38 +1,48 @@
 /*
  * Longest common subsequence problem
  */
+#include <algorithm>
 #include <cassert>
+#include <iostream>
+#include <set>
 #include <string>
 #include <vector>
 using std::vector;
 using std::string;
+using std::cout;
+using std::endl;
+using std::set;
+using std::for_each;
 
 class LCS {
 public:
     LCS(string s1, string s2);
     int length() const { return table[n1][n2]; }
-    string getLCS() const { return lcs; }
+    const set<string>& getLcs() const { return lcs; }
 
 private:
     string s1;
     string s2;
     size_t n1;
     size_t n2;
-    string lcs;                 // longest common sequence
+    set<string> lcs;            // longest common sequence
     vector<vector<int>> table;  // path table
 
     void buildPath();
-    string backtrace(size_t i, size_t j) const;
+    set<string> backtrace(size_t i, size_t j);  // return all lcs
 };
 
-int main() {
-    LCS a("program", "algorithm");
-    assert(a.length() == 3);
-    assert(a.getLCS() == "grm");
+int main(int argc, char* argv[]) {
+    assert(argc == 3);
+    cout << "string one : " << argv[1] << endl;
+    cout << "string two : " << argv[2] << endl;
 
-    LCS b("computer", "cute");
-    assert(b.length() == 4);
-    assert(b.getLCS() == "cute");
+    LCS x(argv[1], argv[2]);
+    cout << "length of lcs: " << x.length() << endl;
+    set<string> ss = x.getLcs();
+    cout << "all lcs: ";
+    for (auto& e : ss) cout << e << " ";
+    cout << endl;
 }
 
 LCS::LCS(string s1, string s2)
@@ -58,13 +68,23 @@ void LCS::buildPath() {
     }
 }
 
-string LCS::backtrace(size_t i, size_t j) const {
-    if (i == 0 || j == 0) return string();
+set<string> LCS::backtrace(size_t i, size_t j) {
+    if (i == 0 || j == 0) return set<string>({""});
+    set<string> res;
 
-    if (s1[i - 1] == s2[j - 1]) return backtrace(i - 1, j - 1) + s1[i - 1];
+    if (s1[i - 1] == s2[j - 1]) {
+        set<string> old = backtrace(i - 1, j - 1);
+        for (auto e : old) res.insert(e + s1[i - 1]);
+        return res;
+    }
 
-    if (table[i - 1][j] > table[i][j - 1])
-        return backtrace(i - 1, j);
-    else
-        return backtrace(i, j - 1);
+    if (table[i - 1][j] >= table[i][j - 1]) {
+        set<string> temp = backtrace(i - 1, j);
+        res.insert(temp.begin(), temp.end());
+    }
+    if (table[i][j - 1] >= table[i - 1][j]) {
+        set<string> temp = backtrace(i, j - 1);
+        res.insert(temp.begin(), temp.end());
+    }
+    return res;
 }
