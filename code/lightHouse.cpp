@@ -5,6 +5,8 @@
  *  + http://www.szeju.com/index.php/other/10174237.html
  */
 #include <iostream>
+#include <utility>
+#include <ctime>
 using namespace std;
 
 struct Point {
@@ -12,8 +14,28 @@ struct Point {
     long y;
 };
 
+void qsort(Point* arr, int lo, int hi) {
+    srand(time(0));
+
+    if (hi - lo < 2) return;
+
+    int key = lo + rand() % (hi - lo);
+    long xKey = arr[key].x;
+    swap(arr[lo], arr[key]);
+
+    int i = lo + 1;
+    for (int j = lo + 1; j < hi; ++j) {
+        if (arr[j].x < xKey) {
+            swap(arr[i++], arr[j]);
+        }
+    }
+    swap(arr[--i], arr[lo]);
+    qsort(arr, lo, i);
+    qsort(arr, i + 1, hi);
+}
+
 template <typename T, class Compare>
-long merge(T* arr, int mid, int lo, int hi, Compare cmp) {
+long invBetween(T* arr, int mid, int lo, int hi, Compare cmp) {
     long inv = 0;
 
     T* A = arr + lo;
@@ -38,16 +60,26 @@ long merge(T* arr, int mid, int lo, int hi, Compare cmp) {
 }
 
 template <typename T, class Compare>
-long mergeSort(T* arr, int lo, int hi, Compare cmp) {
+long invInside(T* arr, int lo, int hi, Compare cmp) {
     // returen inversion number
     if (hi - lo < 2) return 0;
 
-    long mid = (lo + hi) / 2;
-    long l = mergeSort(arr, lo, mid, cmp);
-    long r = mergeSort(arr, mid, hi, cmp);
-    long m = merge(arr, mid, lo, hi, cmp);
+    int mid = (lo + hi) / 2;
+    long l = invInside(arr, lo, mid, cmp);
+    long r = invInside(arr, mid, hi, cmp);
+    long m = invBetween(arr, mid, lo, hi, cmp);
     return l + r + m;
 }
+
+class cmpX {
+public:
+    bool operator()(const Point& a, const Point& b) { return a.x < b.x; }
+};
+
+class cmpY {
+public:
+    bool operator()(const Point& a, const Point& b) { return a.y < b.y; }
+};
 
 int main() {
     // read data length
@@ -61,12 +93,10 @@ int main() {
     }
 
     // sort by x
-    mergeSort(arr, 0, n,
-              [](const Point& a, const Point& b) { return a.x < b.x; });
+    qsort(arr, 0, n);
 
     // sort by y, and print #LightHouse = #Points - #Inversions
-    long inv = mergeSort(
-        arr, 0, n, [](const Point& a, const Point& b) { return a.y < b.y; });
+    long inv = invInside(arr, 0, n, cmpY());
     cout << n * (n - 1) / 2 - inv << endl;
 
     delete[] arr;
