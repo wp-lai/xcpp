@@ -8,3 +8,4 @@ Exercises in C++
 + [fibonacci number](code/fibonacci.cpp)
 + [longest common subsequence](code/lcs.cpp)
 + [workload problem](code/workload.cpp)
++ [lighthouse problem](code/lightHouse.cpp)
