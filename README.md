@@ -2,6 +2,7 @@
 Exercises in C++
 
 ## algorithms
++ [merge sort](code/mergeSort.cpp)
 + [counting inversions](code/inversions.cpp)
 + [count comparisons used in quicksort](code/countComparisons/countComparisons.cpp)
 + [fibonacci number](code/fibonacci.cpp)
