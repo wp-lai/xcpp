@@ -10,3 +10,4 @@ Exercises in C++
 + [longest common subsequence](code/lcs.cpp)
 + [workload problem](code/workload.cpp)
 + [lighthouse problem](code/lightHouse.cpp)
++ [zuma replay](code/zuma.cpp)
